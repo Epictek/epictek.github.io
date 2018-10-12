@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+
+<head>
+<meta charset="utf-8" />
+<meta name="author" content="Kieran Coldron" />
+<meta name="description" content="Personal blog." />
+<meta name="keywords" content="blog, tech" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<meta name="generator" content="Hugo 0.49" />
+
+<link rel="canonical" href="/posts/ffmeg-ndi/">
+<meta property="og:title" content="Streaming to twitch with NDI and FFmpeg" />
+<meta property="og:description" content="My girlfriend has recently been streaming pubg on twitch, she asked me to set everything up for her so of course I had to overcomplicate it.
+What is NDI? NDI is a standard designed for low latency video feeds over a network. Why is this useful?
+Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required. NDI is an almost &ldquo;lossless&rdquo; stream meaning that we can offload the processing to a second &ldquo;streaming&rdquo; PC leaving more CPU for playing games which is especially useful for games such as Pubg that are very CPU demanding." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/ffmeg-ndi/" /><meta property="article:published_time" content="2018-10-11T22:48:31&#43;01:00"/>
+<meta property="article:modified_time" content="2018-10-11T22:48:31&#43;01:00"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Streaming to twitch with NDI and FFmpeg"/>
+<meta name="twitter:description" content="My girlfriend has recently been streaming pubg on twitch, she asked me to set everything up for her so of course I had to overcomplicate it.
+What is NDI? NDI is a standard designed for low latency video feeds over a network. Why is this useful?
+Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required. NDI is an almost &ldquo;lossless&rdquo; stream meaning that we can offload the processing to a second &ldquo;streaming&rdquo; PC leaving more CPU for playing games which is especially useful for games such as Pubg that are very CPU demanding."/>
+
+
+
+<meta itemprop="name" content="Streaming to twitch with NDI and FFmpeg">
+<meta itemprop="description" content="My girlfriend has recently been streaming pubg on twitch, she asked me to set everything up for her so of course I had to overcomplicate it.
+What is NDI? NDI is a standard designed for low latency video feeds over a network. Why is this useful?
+Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required. NDI is an almost &ldquo;lossless&rdquo; stream meaning that we can offload the processing to a second &ldquo;streaming&rdquo; PC leaving more CPU for playing games which is especially useful for games such as Pubg that are very CPU demanding.">
+
+
+<meta itemprop="datePublished" content="2018-10-11T22:48:31&#43;01:00" />
+<meta itemprop="dateModified" content="2018-10-11T22:48:31&#43;01:00" />
+<meta itemprop="wordCount" content="528">
+
+
+
+<meta itemprop="keywords" content="" />
+
+
+<link rel="stylesheet" href="/css/layout.css" />
+<style type="text/css">
+body {
+  background-color: #101010;
+  color: #dbdbdb;
+}
+
+a { color: #dbdbdb; }
+
+pre {
+  background: #1D1F21;
+  border: 1px solid #dbdbdb;
+  border-radius: 5px;
+}
+
+code {
+  background: #1D1F21;
+}
+
+blockquote {
+  background: #1D1F21;
+  border-left: 3px solid #dbdbdb;
+}
+
+table {
+  margin: 1em auto;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #dbdbdb;
+}
+
+th {
+  background: #dbdbdb;
+  color: #101010;
+}
+
+.siteTitle a { color: #99cc66; }
+
+.post .content h1{ color: #99cc66; }
+.post .content h2{ color: #99cc66; }
+.post .content h3{ color: #99cc66; }
+.post .content h4{ color: #99cc66; }
+.post .content h5{ color: #99cc66; }
+.post .content h6{ color: #99cc66; }
+.post .content a:hover { color: #99cc66; }
+.social-link:hover { color: #99cc66; }
+.nav-item-title:hover { color: #99cc66; }
+.tag a:hover { color: #99cc66; }
+.copyright { color: #404040 }
+.poweredby { color: #404040 }
+.poweredby a { color: #404040; }
+.post-preview .title a{ color: #99cc66; }
+.content-item a:hover{
+  text-decoration: underline;
+  color: #99cc66;
+}
+.post-list .title { color: #99cc66; }
+.rmore { color: #99cc66; }
+.terms .term a:hover {
+  text-decoration: underline;
+  color: #99cc66;
+}
+
+</style>
+
+<title>
+
+
+     Streaming to twitch with NDI and FFmpeg 
+
+</title>
+
+</head>
+
+
+<body>
+<div class="main">
+<header>
+
+<div class="header-bar">
+
+  <nav>
+    <div class="siteTitle">
+      <a href="/">Kieran Coldron</a>
+    </div> 
+
+    
+    
+    <a class="nav-item" href="/posts/"><div class="nav-item-title">Posts</div></a>
+    
+    <a class="nav-item" href="/tags/"><div class="nav-item-title">Tags</div></a>
+    
+
+  </nav>
+</div>
+
+  
+<div class="social-links-header">
+
+  
+  <a href="mailto:kieran@coldron.com"><div class="social-link">email</div></a>
+  
+
+  
+  <a href="https://github.com/github%20id" target="_blank"><div class="social-link">gh</div></a>
+  
+
+  
+  <a href="https://gitlab.com/gitlab%20id" target="_blank"><div class="social-link">gl</div></a>
+  
+
+  
+  <a href="https://twitter.com/twitter%20id" target="_blank"><div class="social-link">twtr</div></a>
+  
+
+  
+  <a href="https://www.linkedin.com/in/linkedin%20id" target="_blank"><div class="social-link">in</div></a>
+  
+
+</div>
+
+
+</header>
+
+
+<article class="post">
+    <h1 class="title"> Streaming to twitch with NDI and FFmpeg </h1>
+    <div class="content"> 
+
+<p>My girlfriend has recently been streaming pubg on twitch, she asked me to set everything up for her so of course I had to overcomplicate it.</p>
+
+<h1 id="what-is-ndi">What is NDI?</h1>
+
+<p>NDI is a standard designed for low latency video feeds over a network. Why is this useful?<br />
+Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required.
+NDI is an almost &ldquo;lossless&rdquo; stream meaning that we can offload the processing to a second &ldquo;streaming&rdquo; PC leaving more
+CPU for playing games which is especially useful for games such as Pubg that are very CPU demanding.</p>
+
+<h1 id="why-not-rtmp">Why not RTMP?</h1>
+
+<p>RTMP would work fine but it doesn&rsquo;t offer the same latency and benifits of NDI.</p>
+
+<h1 id="guide">Guide</h1>
+
+<p>OBS already has NDI plugins which can be obtained from <a href="https://obsproject.com/forum/resources/obs-ndi-newtek-ndi%E2%84%A2-integration-into-obs-studio.528/">here</a> but I wanted to
+use FFMPEG on the streaming PC so I didn&rsquo;t need to have another GUI application
+open, OBS has a lot of unneeded features. OBS will still be used on the gaming
+PC as it offers some very useful features such as scenes and it&rsquo;s the easiest way to stream on windows.</p>
+
+<p>First of all the NDI SDK from <a href="https://www.newtek.com/ndi/sdk/#download-sdk">here</a> or using one of these direct download links to avoid having to give any personal details:</p>
+
+<ul>
+<li><a href="http://new.tk/NDISDKLINUX">new.tk short link, this currently does not work?</a></li>
+<li><a href="http://514f211588de67e4fdcf-437b8dd50f60b69cf0974b538e50585b.r63.cf1.rackcdn.com/Utilities/SDK/NDI_SDK_Linux_v2/InstallNDISDK_v3_Linux.sh">rackcnd link, this might break at any time</a></li>
+</ul>
+
+<p>Now we have downloaded the sdk we need to extract it and move the libary files to the correct location.</p>
+
+<pre><code>cd ~/Downloads/
+sh InstallNDISDK_v3_Linux.sh
+sudo cp -r NDI SDK for Linux/lib/x86_64-linux-gnu/* /usr/lib/
+sudo mkdir /user/include/ndi
+sudo cp -r /usr/include/ndi/include/* /usr/include/ndi/
+</code></pre>
+
+<p>Now we need to build ffmpeg with NDI.</p>
+
+<pre><code># clone ffmpeg in to ffmpeg-ndi
+git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git ffmpeg-ndi
+cd ffmpeg-ndi
+# configure ffmpeg pointing to where the NDI sdk is installed
+`./configure --enable-nonfree --enable-libndi_newtek --extra-cflags=&quot;-I/usr/include/ndi/&quot; --extra-ldflags=&quot;-L/usr/include/ndi/&quot; --enable-libx264 --enable-gpl
+make
+</code></pre>
+
+<p>Now we should be able to use NDI, first Start a NDI input such as OBS and the type the following command to list NDI inputs on the network</p>
+
+<pre><code>./ffmpeg -f libndi_newtek -find_sources 1 -i dummy
+</code></pre>
+
+<p>Lets preview the NDI input to make sure everything is working, replace the given input name with the result from the previous command.</p>
+
+<pre><code>./ffplay -f libndi_newtek -i &quot;DESKTOP-18HJ647 (JessPC)&quot;
+</code></pre>
+
+<p>The following script can be used for streaming to twitch, change the variables according to your setup.</p>
+
+<pre><code>INRES=&quot;1920x1080&quot; # input resolution
+OUTRES=&quot;1280x720&quot; # output resolution
+FPS=&quot;30&quot; # target FPS
+GOP=&quot;60&quot; # i-frame interval, should be double of FPS,
+GOPMIN=&quot;30&quot; # min i-frame interval, should be equal to fps
+THREADS=&quot;0&quot; # use as many threads as possible
+CBR=&quot;3000k&quot; # constant bitrate (should be between 1000k - 3000k)
+QUALITY=&quot;ultrafast&quot;  # one of the many FFMPEG presets
+AUDIO_SRATE=&quot;44100&quot;
+AUDIO_CHANNELS=&quot;2&quot; #1 for mono output, 2 for stereo
+AUDIO_ERATE=&quot;360k&quot; #audio encoding rate
+STREAM_KEY=&quot;&quot; #your twitch stream key goes here
+SERVER=&quot;live-lhr&quot; #  http://bashtech.net/twitch/ingest.php for list
+NDI_INPUT=&quot;DESKTOP-18HJ647 (JessPC)&quot;
+
+~/ffmpeg-ndi/ffmpeg  -f libndi_newtek -i &quot;$NDI_INPUT&quot; -s &quot;$INRES&quot; -r &quot;$FPS&quot; \
+-f flv -ac $AUDIO_CHANNELS -b:a $AUDIO_ERATE -ar $AUDIO_SRATE \
+-vcodec libx264 -g $GOP -keyint_min $GOPMIN -b:v $CBR -minrate $CBR \
+-maxrate $CBR  -pix_fmt yuv420p -s $OUTRES \
+-acodec libmp3lame -threads $THREADS -strict normal \
+-bufsize $CBR &quot;rtmp://$SERVER.twitch.tv/app/$STREAM_KEY&quot;
+</code></pre>
+
+<p>Sources and useful resources</p>
+
+<ul>
+<li><a href="https://www.ffmpeg.org/ffmpeg-devices.html#libndi_005fnewtek">https://www.ffmpeg.org/ffmpeg-devices.html#libndi_005fnewtek</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Streaming_to_twitch.tv">https://wiki.archlinux.org/index.php/Streaming_to_twitch.tv</a></li>
+</ul>
+ </div>
+    <footer class="post-footer">
+
+  <div class="post-footer-data">
+    
+<div class="tags">
+    
+</div>
+
+    <div class="date"> Oct 11, 2018 </div>
+  </div>
+
+</footer>
+
+<div id="commento"></div>
+<script src="http://commento.steinscraft.net/js/commento.js"></script>
+
+</article>
+
+  <footer>
+
+  <div class="social-links-footer">
+
+  
+  <a href="mailto:kieran@coldron.com"><div class="social-link">Email</div></a>
+  
+
+  
+  <a href="https://github.com/github%20id" target="_blank"><div class="social-link">GitHub</div></a>
+  
+
+  
+  <a href="https://gitlab.com/gitlab%20id" target="_blank"><div class="social-link">GitLab</div></a>
+  
+
+  
+  <a href="https://twitter.com/twitter%20id" target="_blank"><div class="social-link">Twitter</div></a>
+  
+
+  
+  <a href="https://www.linkedin.com/in/linkedin%20id" target="_blank"><div class="social-link">LinkedIn</div></a>
+  
+
+  <div class="social-link">
+  <a href="/index.xml" target="_blank">RSS</a>
+  </div>
+
+</div>
+
+
+  <div class="copyright"> Copyright (c) 2018, all rights reserved. </div>
+
+  <div class="poweredby">
+    Powered by <a href="https://gohugo.io/">Hugo</a>.
+  </div>
+
+  </footer>
+
+</div> 
+
+</body>
+
+</html>
+
