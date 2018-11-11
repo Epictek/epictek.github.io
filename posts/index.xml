@@ -18,9 +18,9 @@
       <pubDate>Thu, 11 Oct 2018 22:48:31 +0100</pubDate>
       
       <guid>/posts/ffmeg-ndi/</guid>
-      <description>My girlfriend has recently been streaming pubg on twitch, she asked me to set everything up for her so of course I had to overcomplicate it.
+      <description>My girlfriend has recently been streaming PUBG on Twitch, she asked me to set everything up for her so of course I had to overcomplicate it.
 What is NDI? NDI is a standard designed for low latency video feeds over a network. Why is this useful?
-Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required. NDI is an almost &amp;ldquo;lossless&amp;rdquo; stream meaning that we can offload the processing to a second &amp;ldquo;streaming&amp;rdquo; PC leaving more CPU for playing games which is especially useful for games such as Pubg that are very CPU demanding.</description>
+Well streaming to services such as Twitch requires a decent amount of processing power due to the encoding required. NDI is an almost &amp;ldquo;lossless&amp;rdquo; stream meaning that we can offload the encoding to a second &amp;ldquo;streaming&amp;rdquo; PC leaving more CPU for playing games which is especially useful for games such as PUBG that are very CPU demanding.</description>
     </item>
     
   </channel>
